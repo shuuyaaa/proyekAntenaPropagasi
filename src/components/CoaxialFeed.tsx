@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect, useCallback } from 'react';
 import type { FC } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -38,11 +38,10 @@ function TVScreenDisplay({
 
   const textureRef = useRef<THREE.CanvasTexture>(null);
 
-  useFrame(({ clock }) => {
+  const renderScreen = useCallback((t: number) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const t = clock.getElapsedTime();
     const w = canvas.width;
     const h = canvas.height;
 
@@ -180,16 +179,26 @@ function TVScreenDisplay({
       ctx.font = '22px "JetBrains Mono", monospace';
       ctx.fillText(`STATUS: OUT-OF-BAND (Target: 658 MHz) • BALUN 75 Ω TERPASANG`, 40, h - 28);
     }
+  }, [canvas, isTargetInBand, selectedStation, targetChannel, signalQualityPercent, sleeveLength]);
 
+  useEffect(() => {
+    renderScreen(0);
+    if (textureRef.current) {
+      textureRef.current.needsUpdate = true;
+    }
+  }, [renderScreen]);
+
+  useFrame(({ clock }) => {
+    renderScreen(clock.getElapsedTime());
     if (textureRef.current) {
       textureRef.current.needsUpdate = true;
     }
   });
 
   return (
-    <mesh position={[0, 5.0, 0.32]}>
+    <mesh position={[0, 5.0, 0.35]}>
       <planeGeometry args={[15.4, 9.0]} />
-      <meshBasicMaterial toneMapped={false}>
+      <meshBasicMaterial toneMapped={false} side={THREE.DoubleSide}>
         <canvasTexture ref={textureRef} attach="map" args={[canvas]} />
       </meshBasicMaterial>
     </mesh>

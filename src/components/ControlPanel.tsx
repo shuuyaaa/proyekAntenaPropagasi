@@ -19,6 +19,7 @@ import {
   Download,
   Boxes,
   Check,
+  X,
 } from 'lucide-react';
 import type {
   AntennaParams,
@@ -50,6 +51,7 @@ interface ControlPanelProps {
   setHighlightArm: (arm: 'none' | 'arm1' | 'arm2') => void;
   onOpenTheory: () => void;
   onOpenTVMonitor: () => void;
+  onClose?: () => void;
 }
 
 export const ControlPanel: FC<ControlPanelProps> = ({
@@ -66,6 +68,7 @@ export const ControlPanel: FC<ControlPanelProps> = ({
   setHighlightArm,
   onOpenTheory,
   onOpenTVMonitor,
+  onClose,
 }) => {
   const [selectedFormat, setSelectedFormat] = useState<ImageFormat>('png');
 
@@ -123,17 +126,31 @@ export const ControlPanel: FC<ControlPanelProps> = ({
     <aside className="control-panel-container custom-scrollbar">
       {/* 1. HEADER INFORMASI & IDENTITAS KELOMPOK 6 */}
       <div className="panel-header">
-        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-          <span className="badge-its">ITS FTEIC</span>
-          <span className="badge-course">EL234504</span>
-          <span className="badge-kelompok-6">
-            <Target size={11} /> KELOMPOK VI
-          </span>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className="badge-its">ITS FTEIC</span>
+              <span className="badge-course">EL234504</span>
+              <span className="badge-kelompok-6">
+                <Target size={11} /> KELOMPOK VI
+              </span>
+            </div>
+            <h1 className="panel-title">Archimedean &amp; Equiangular Spiral</h1>
+            <p className="panel-subtitle">
+              Rancang Bangun Antena Penerima Siaran TV Broadcast &bull; Teknik Elektro ITS
+            </p>
+          </div>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="panel-close-btn"
+              title="Tutup Panel &amp; Tampilkan 3D Layar Penuh"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
-        <h1 className="panel-title">Archimedean &amp; Equiangular Spiral</h1>
-        <p className="panel-subtitle">
-          Rancang Bangun Antena Penerima Siaran TV Broadcast &bull; Teknik Elektro ITS
-        </p>
       </div>
 
       {/* 2. MODE OPERASI: TV BROADCAST KELOMPOK 6 VS LAB GELOMBANG MIKRO */}
@@ -759,6 +776,19 @@ export const ControlPanel: FC<ControlPanelProps> = ({
           </div>
         </div>
       </div>
+
+      {onClose && (
+        <div className="panel-mobile-footer">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-close-mobile-panel"
+          >
+            <Check size={16} />
+            <span>Selesai &amp; Tampilkan 3D Layar Penuh</span>
+          </button>
+        </div>
+      )}
     </aside>
   );
 };
